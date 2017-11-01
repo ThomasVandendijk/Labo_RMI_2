@@ -1,6 +1,7 @@
 package sessions;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import rentalagency.RentalStore;
 public class ManagerSession implements IManagerSession{
     
 	
-    public Set<String> getBestClient(){
+    public Set<String> getBestClient() throws RemoteException{
     	Map<String, ICarRentalCompany> companies = RentalStore.getRentals();
     	Map<String, Integer> nbReservationsPerCustomer = new HashMap<String, Integer>();
     	for(String key: companies.keySet()){
@@ -35,9 +36,11 @@ public class ManagerSession implements IManagerSession{
         for(String key: keySet){
             if(solutionKeys.isEmpty() || hashMap.get(key)>hashMap.get(solutionKeys.get(0))){
                 solutionKeys.removeAll(solutionKeys);
+                System.out.println("the current renter: " + key);
                 solutionKeys.add(key);
             }
             else if(hashMap.get(key)==hashMap.get(solutionKeys.get(0))){
+            	System.out.println("the current renter: " + key);
             	solutionKeys.add(key);
             }
         }
@@ -45,8 +48,18 @@ public class ManagerSession implements IManagerSession{
         return solutionSet;
     }
     
+    private CarType getHighestValuedCarType(Map<CarType,Integer> hashMap){
+        Set<CarType> keySet = hashMap.keySet();
+        CarType highestCarType = null;
+        for(CarType key: keySet){
+            if(highestCarType == null || hashMap.get(key)>hashMap.get(highestCarType)){
+                highestCarType = key;
+            }
+        }
+        return highestCarType;
+    }
     
-    public int getNumberOfReservationsForCarType(String carRentalName, String carType){
+    public int getNumberOfReservationsForCarType(String carRentalName, String carType) throws RemoteException{
     	ICarRentalCompany company = RentalStore.getRental(carRentalName);
     	return company.getReservationCartype(carType);
     	
@@ -66,5 +79,16 @@ public class ManagerSession implements IManagerSession{
 	@Override
 	public Set<String> getAllRentalCompanies() {
         return new HashSet<String>(RentalStore.getRentals().keySet());
+	}
+
+	@Override
+	public CarType getMostPopularCarTypeIn(String carRentalCompanyName, int year)
+			throws RemoteException {
+		ICarRentalCompany company = RentalStore.getRental(carRentalCompanyName);
+		Map<CarType, Integer> nbOfReservationsPerCarType = company.getReservationForEachCarType(year);
+		for(CarType cartype:nbOfReservationsPerCarType.keySet()){
+			System.out.println(cartype.getName() + " has " + nbOfReservationsPerCarType.get(cartype) + " reservations");
+		}
+		return getHighestValuedCarType(nbOfReservationsPerCarType);
 	}
 }

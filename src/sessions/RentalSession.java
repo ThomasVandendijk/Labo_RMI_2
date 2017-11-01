@@ -1,11 +1,13 @@
 package sessions;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import rental.CarType;
 import rental.ICarRentalCompany;
 import rental.Quote;
@@ -23,15 +25,19 @@ public class RentalSession implements IRentalSession {
     }
 
     @Override
-    public Quote createQuote(ReservationConstraints constraints, String guest) throws ReservationException{
+    public Quote createQuote(ReservationConstraints constraints, String guest) throws ReservationException, RemoteException{
         Map<String, ICarRentalCompany> rentals = RentalStore.getRentals();
         String carType = constraints.getCarType();
         Date startDate = constraints.getStartDate();
         Date endDate = constraints.getEndDate();
-        
         for(String company: rentals.keySet()){
             ICarRentalCompany carCompany = rentals.get(company);
-            Boolean isAvailable = carCompany.isAvailable(carType, startDate,endDate); 
+            boolean isAvailable = false;
+            try{
+            	isAvailable = carCompany.isAvailable(carType, startDate,endDate); 
+            } catch(Exception e){
+            	
+            }
             if(isAvailable){
                 try{
                     Quote quote = carCompany.createQuote(constraints, guest);
@@ -55,12 +61,13 @@ public class RentalSession implements IRentalSession {
     }
 
     @Override
-    public List<Reservation> confirmQuotes() throws ReservationException {
+    public List<Reservation> confirmQuotes() throws ReservationException, RemoteException {
         List<Reservation> confirmedQuotes = new ArrayList<Reservation>();
         List<Quote> quotes = getCurrentQuotes();
         Map<String, ICarRentalCompany> rentals = RentalStore.getRentals();
         try{
             for(Quote quote:quotes){
+            	System.out.println(quote.getCarType());
                 ICarRentalCompany company = rentals.get(quote.getRentalCompany());
                 Reservation reservation = company.confirmQuote(quote);
                 confirmedQuotes.add(reservation);
@@ -77,7 +84,7 @@ public class RentalSession implements IRentalSession {
     }
     
     @Override
-    public Set<CarType> getAllAvailableCarTypes(Date start, Date end) {
+    public Set<CarType> getAllAvailableCarTypes(Date start, Date end) throws RemoteException {
         Set<CarType> availableCartypes = new HashSet<CarType>();
         Map<String,ICarRentalCompany> companies = RentalStore.getRentals();
         Set<String> keySet = companies.keySet();
@@ -88,12 +95,12 @@ public class RentalSession implements IRentalSession {
         return availableCartypes;
     }
     
-    private Set<CarType> getAvailableCarTypes(ICarRentalCompany company, Date start, Date end){
+    private Set<CarType> getAvailableCarTypes(ICarRentalCompany company, Date start, Date end) throws RemoteException{
         return company.getAvailableCarTypes(start, end);
     }
 
 	@Override
-	public String getCheapestCarType(Date start, Date end, String region) {
+	public String getCheapestCarType(Date start, Date end, String region) throws RemoteException {
 		Map<String, ICarRentalCompany> allCompanies = RentalStore.getRentals();
 		Set<String> keySet = allCompanies.keySet();
 		Set<CarType> availableCarTypes = new HashSet<CarType>();

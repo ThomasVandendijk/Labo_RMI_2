@@ -34,10 +34,10 @@ public class RentalServer {
 			registry.bind(ISessionHandler.class.toString(), stub);
 			
 			ICarRentalCompany stubHertz = (ICarRentalCompany) UnicastRemoteObject.exportObject(company,0);
-			registry.bind("hertz", stub);
+			registry.bind("Hertz", stubHertz);
 			
 			ICarRentalCompany stubDockx = (ICarRentalCompany) UnicastRemoteObject.exportObject(company2,0);
-			registry.bind("dockx", stub);
+			registry.bind("Dockx", stubDockx);
 			
 		} catch(Exception e){
 			System.err.println("Server Exception: " + e.toString());

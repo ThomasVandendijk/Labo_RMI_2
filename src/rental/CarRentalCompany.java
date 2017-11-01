@@ -83,6 +83,7 @@ public class CarRentalCompany implements ICarRentalCompany{
 	
 	public boolean isAvailable(String carTypeName, Date start, Date end) {
 		logger.log(Level.INFO, "<{0}> Checking availability for car type {1}", new Object[]{name, carTypeName});
+		//System.out.println("the name of the company: " + this.getName());
 		if(carTypes.containsKey(carTypeName)) {
 			return getAvailableCarTypes(start, end).contains(carTypes.get(carTypeName));
 		} else {
@@ -213,6 +214,23 @@ public class CarRentalCompany implements ICarRentalCompany{
 	}
 	
 	@Override
+	public Map<CarType, Integer> getReservationForEachCarType(int year) {
+        Collection<CarType> carTypes = this.getAllCarTypes();
+        Map<CarType, Integer> solution = new HashMap<CarType, Integer>();
+        for(CarType carType:carTypes){
+            solution.put(carType, 0);
+        }
+        Collection<Car> cars = getCars();
+        for (Car car:cars){
+            int amountOfReservations = car.getNumberReservations(year);
+            //System.out.println("temporary value:" + amountOfReservations);
+            Integer currentNumber = solution.get(car.getType()) + amountOfReservations;
+            solution.put(car.getType(), currentNumber);
+        }
+        return solution;
+    }
+	
+	@Override
 	public Map<String, Integer> getReservationForEachCarType() {
         Collection<CarType> carTypes = this.getAllCarTypes();
         Map<String, Integer> solution = new HashMap<String, Integer>();
@@ -250,7 +268,7 @@ public class CarRentalCompany implements ICarRentalCompany{
 	
 	private void AddOneToHashMapValue(Map<String,Integer> hashMap, String key){
         
-        if(hashMap.get(key) != null){
+        if(hashMap.get(key) == null){
             hashMap.put(key, 1);
         }
         else{

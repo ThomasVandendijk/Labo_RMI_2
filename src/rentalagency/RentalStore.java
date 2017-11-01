@@ -42,10 +42,11 @@ public class RentalStore {
             rentals = new HashMap<String, ICarRentalCompany>();
 			try{
 				Registry registry = LocateRegistry.getRegistry("localhost");
-				ICarRentalCompany company = (ICarRentalCompany) registry.lookup("hertz");
-				ICarRentalCompany company2 = (ICarRentalCompany) registry.lookup("dockx");
-				rentals.put("hertz", company);
-				rentals.put("dockx", company2);
+				ICarRentalCompany company = (ICarRentalCompany) registry.lookup("Hertz");
+				ICarRentalCompany company2 = (ICarRentalCompany) registry.lookup("Dockx");
+				rentals.put("Hertz", company);
+				rentals.put("Dockx", company2);
+				
 			}catch(Exception e){
 				e.printStackTrace();
 			}

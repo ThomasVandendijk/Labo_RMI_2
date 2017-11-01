@@ -69,7 +69,15 @@ public class Car {
 		}
 		return renterReservations;
 	}
-    
+    public int getNumberReservations(int year){
+    	int amountOfReservations = 0;    	
+    	for(Reservation reservation:this.getAllReservations()){
+    		if(reservation.getStartDate().getYear()+1900 == year){
+    			amountOfReservations++;
+    		}
+    	}
+    	return amountOfReservations;
+    }
     public int getNumberReservations(){
     	return reservations.size();
     }

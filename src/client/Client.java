@@ -17,13 +17,20 @@ import sessions.ISessionHandler;
 public class Client extends AbstractTestManagement<IRentalSession,IManagerSession>{
 	
 	private ISessionHandler sessionHandler;
-
+	
+	public static void main(String[] args){
+		new Client("/home/r0455853/git/Labo_RMI_2/trips");
+		
+	}
+	
+	
 	public Client(String scriptFile) {
 		super(scriptFile);
 		try{
 			System.setSecurityManager(null);
 			Registry registry = LocateRegistry.getRegistry("localhost");
 			sessionHandler = (ISessionHandler) registry.lookup(ISessionHandler.class.toString());
+			run();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -42,8 +49,7 @@ public class Client extends AbstractTestManagement<IRentalSession,IManagerSessio
 	@Override
 	protected CarType getMostPopularCarTypeIn(IManagerSession ms, String carRentalCompanyName, int year)
 			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
 	}
 
 	@Override
