@@ -25,7 +25,7 @@ public class ManagerSession implements IManagerSession{
     	Map<String, Integer> nbReservationsPerCustomer = new HashMap<String, Integer>();
     	for(String key: companies.keySet()){
     		ICarRentalCompany company = companies.get(key);
-    		company.getCustomersPerCompany(nbReservationsPerCustomer);
+    		nbReservationsPerCustomer.putAll(company.getCustomersPerCompany(nbReservationsPerCustomer));
     	}
     	return getHighestValue(nbReservationsPerCustomer);
     }
