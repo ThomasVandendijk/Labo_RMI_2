@@ -17,13 +17,19 @@ import sessions.ISessionHandler;
 public class Client extends AbstractTestManagement<IRentalSession,IManagerSession>{
 	
 	private ISessionHandler sessionHandler;
-
+	
+	public static void main(String[] args){
+				new Client("trips");
+				
+			}
+	
 	public Client(String scriptFile) {
 		super(scriptFile);
 		try{
 			System.setSecurityManager(null);
 			Registry registry = LocateRegistry.getRegistry("localhost");
 			sessionHandler = (ISessionHandler) registry.lookup(ISessionHandler.class.toString());
+			run();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -43,7 +49,7 @@ public class Client extends AbstractTestManagement<IRentalSession,IManagerSessio
 	protected CarType getMostPopularCarTypeIn(IManagerSession ms, String carRentalCompanyName, int year)
 			throws Exception {
 		
-		return null;
+		return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
 	}
 
 	@Override
