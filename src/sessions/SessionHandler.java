@@ -5,12 +5,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class SessionHandler implements ISessionHandler {
 	
 	
 	boolean isBinded = false;
-	Map<String, RentalSession> clientSessions = new HashMap<String, RentalSession>();
+	Map<String, RentalSession> renterSessions = new HashMap<String, RentalSession>();
 	IManagerSession managerSession;
 	
 	@Override
@@ -20,7 +21,7 @@ public class SessionHandler implements ISessionHandler {
 			IRentalSession stub = (IRentalSession) UnicastRemoteObject.exportObject(session,0);
 			Registry registry = LocateRegistry.getRegistry();
 			registry.bind(renter, stub);
-			clientSessions.put(renter, session);
+			renterSessions.put(renter, session);
 			
 		} catch(Exception e){
 			System.err.println("Server Exception: " + e.toString());
@@ -50,6 +51,7 @@ public class SessionHandler implements ISessionHandler {
 		try{
 			Registry registry = LocateRegistry.getRegistry();
 			registry.unbind(renter);
+			renterSessions.remove(renter);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -60,6 +62,20 @@ public class SessionHandler implements ISessionHandler {
 			Registry registry = LocateRegistry.getRegistry();
 			registry.unbind(IManagerSession.class.toString());
 			isBinded = false;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private void terminateAllRenterSessions(){
+		try{
+			Set<String> renters = renterSessions.keySet();
+			Registry registry = LocateRegistry.getRegistry();
+			for (String renter: renterSessions.keySet()){
+				
+				registry.unbind(renter);
+				renterSessions.remove(renter);
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
