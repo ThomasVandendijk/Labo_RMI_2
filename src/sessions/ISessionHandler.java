@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface ISessionHandler extends Remote{
 	void createReservationSession(String renter) throws RemoteException;
-	void createManagerSession(String manager) throws RemoteException;
+	void createManagerSession() throws RemoteException;
 	void terminateReservationSession(String renter) throws RemoteException;
 	
 }

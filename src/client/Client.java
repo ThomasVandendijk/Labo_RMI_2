@@ -17,20 +17,13 @@ import sessions.ISessionHandler;
 public class Client extends AbstractTestManagement<IRentalSession,IManagerSession>{
 	
 	private ISessionHandler sessionHandler;
-	
-	public static void main(String[] args){
-		new Client("/home/r0455853/git/Labo_RMI_2/trips");
-		
-	}
-	
-	
+
 	public Client(String scriptFile) {
 		super(scriptFile);
 		try{
 			System.setSecurityManager(null);
 			Registry registry = LocateRegistry.getRegistry("localhost");
 			sessionHandler = (ISessionHandler) registry.lookup(ISessionHandler.class.toString());
-			run();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -49,7 +42,8 @@ public class Client extends AbstractTestManagement<IRentalSession,IManagerSessio
 	@Override
 	protected CarType getMostPopularCarTypeIn(IManagerSession ms, String carRentalCompanyName, int year)
 			throws Exception {
-		return ms.getMostPopularCarTypeIn(carRentalCompanyName, year);
+		
+		return null;
 	}
 
 	@Override
@@ -62,7 +56,7 @@ public class Client extends AbstractTestManagement<IRentalSession,IManagerSessio
 
 	@Override
 	protected IManagerSession getNewManagerSession(String name, String carRentalName) throws Exception {
-		sessionHandler.createManagerSession(name);
+		sessionHandler.createManagerSession();
 		Registry registry = LocateRegistry.getRegistry("localhost");
 		IManagerSession managerSession = (IManagerSession) registry.lookup(IManagerSession.class.toString());
 		return managerSession;

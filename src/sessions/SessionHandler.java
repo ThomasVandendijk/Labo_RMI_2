@@ -1,5 +1,6 @@
 package sessions;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -29,7 +30,7 @@ public class SessionHandler implements ISessionHandler {
 		}
 	}
 	
-	public void createManagerSession(String manager){
+	public void createManagerSession(){
 		
 		if (!isBinded){
 			
@@ -57,7 +58,7 @@ public class SessionHandler implements ISessionHandler {
 		}
 	}
 	
-	public void terminateManagerSession(String manager){
+	public void terminateManagerSession(){
 		try{
 			Registry registry = LocateRegistry.getRegistry();
 			registry.unbind(IManagerSession.class.toString());
@@ -79,6 +80,11 @@ public class SessionHandler implements ISessionHandler {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	protected void terminate(){
+		terminateAllRenterSessions();
+		terminateManagerSession();
 	}
 
 }
